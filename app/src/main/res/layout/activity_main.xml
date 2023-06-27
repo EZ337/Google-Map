@@ -7,10 +7,12 @@
     tools:context=".MainActivity">
 
     <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment" />
+        tools:layout_editor_absoluteX="181dp"
+        tools:layout_editor_absoluteY="16dp" />
 
     <SearchView
         android:id="@+id/search_bar"
@@ -27,7 +29,16 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-
+    <Button
+        android:id="@+id/currentLocBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Current\nLocation"
+        android:elevation="10dp"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

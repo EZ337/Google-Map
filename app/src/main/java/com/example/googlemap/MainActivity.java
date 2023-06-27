@@ -6,8 +6,11 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -21,10 +24,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.IOException;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private final int FINE_PERMISSION_CODE = 1;
     private GoogleMap mMap;
+    private SearchView mapSearch;
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
 
@@ -32,6 +39,36 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mapSearch = findViewById(R.id.search_bar);
+        mapSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                String location = mapSearch.getQuery().toString();
+                List<Address> addressList = null;
+
+                if (location != null){
+                    Geocoder geocoder = new Geocoder(MainActivity.this);
+
+                    try {
+                        addressList = geocoder.getFromLocationName(location, 1);
+                    } catch (IOException e) { //TODO Fix crashing on wrong input
+                        throw new RuntimeException(e);
+                    }
+
+                    Address address =  addressList.get(0);
+                    LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                    mMap.addMarker(new MarkerOptions().position(latLng).title(location));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                }
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return false;
+            }
+        });
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         getLastLocation();
