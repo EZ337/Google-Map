@@ -52,14 +52,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                     try {
                         addressList = geocoder.getFromLocationName(location, 1);
-                    } catch (IOException e) { //TODO Fix crashing on wrong input
-                        throw new RuntimeException(e);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+
                     }
 
-                    Address address =  addressList.get(0);
-                    LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(latLng).title(location));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                    if (!addressList.isEmpty()) {
+                        Address address = addressList.get(0);
+                        LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                        mMap.addMarker(new MarkerOptions().position(latLng).title(location));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+                    } else{
+                        Toast.makeText(MainActivity.this, "Unable to process "
+                                + location + "\nPlease try again", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 return false;
             }
@@ -115,9 +122,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//        LatLng sydney = new LatLng(-34, 151);
+//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         // Add a marker to Farrell Hall
         LatLng Far = new LatLng(42.721, -84.464);
